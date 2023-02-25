@@ -6,14 +6,11 @@ from flask_migrate import Migrate
 from flask_openapi3 import Info, Tag
 from flask_openapi3 import OpenAPI
 from flask import Blueprint
-from flask_swagger_ui import get_swaggerui_blueprint
 
 db = SQLAlchemy()
 
 def create_app():   
 
-    #info = Info(title="book API", version="1.0.0")
-    #app = OpenAPI(__name__, info=info)
     app = Flask(__name__)
           
     enviroment_configuration = os.environ['CONFIGURATION_SETUP']
@@ -22,7 +19,7 @@ def create_app():
 
     db.init_app(app)
     migrate = Migrate(app, db)
-    
+   
     with app.app_context():
         from .authors_api import author_api_blueprint, SWAGGERUI_BLUEPRINT
         from flask_migrate import upgrade

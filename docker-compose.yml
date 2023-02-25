@@ -27,8 +27,9 @@ services:
     image: d4vecode/app-py-authors:1.0.0
     restart: always
     environment:
+      CONFIGURATION_SETUP: "config.DevelopmentConfig"
       SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@postgres-sql:5432/grupod"
-      SERVER_PORT: 7001
+    command: "flask run --port 7001 --host 0.0.0.0"
     depends_on:
       - postgres-sql
       - proxy
@@ -37,6 +38,7 @@ services:
     expose:
       - 7001
     labels:
-      - "traefik.http.routers.authors.rule=PathPrefix(`/app2`)"
-      - "traefik.http.middlewares.authors.stripprefix.prefixes=/app2"
-      - "traefik.http.routers.authors.middlewares=authors"
+       - "traefik.http.routers.authors-service.rule=Host(`localhost`)"
+       - "traefik.http.routers.authors.rule=PathPrefix(`/app2`)"
+       - "traefik.http.middlewares.authors.stripprefix.prefixes=/app2"
+       - "traefik.http.routers.authors.middlewares=authors"
