@@ -3,12 +3,19 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_openapi3 import Info, Tag
+from flask_openapi3 import OpenAPI
+from flask import Blueprint
+from flask_swagger_ui import get_swaggerui_blueprint
 
 db = SQLAlchemy()
 
-def create_app():
-    app = Flask(__name__)
+def create_app():   
 
+    #info = Info(title="book API", version="1.0.0")
+    #app = OpenAPI(__name__, info=info)
+    app = Flask(__name__)
+          
     enviroment_configuration = os.environ['CONFIGURATION_SETUP']
 
     app.config.from_object(enviroment_configuration)
@@ -17,9 +24,17 @@ def create_app():
     migrate = Migrate(app, db)
     
     with app.app_context():
-        from .authors_api import author_api_blueprint
+        from .authors_api import author_api_blueprint, SWAGGERUI_BLUEPRINT
         from flask_migrate import upgrade
+        from sqlalchemy import text
         
         upgrade()
+        stmt = text("INSERT INTO authors (first_name, last_name) SELECT * FROM (VALUES ('nombre1', 'ape1'), ('nombre2', 'ape2'),('nombre3', 'ape3'),('nombre4', 'ape4')) AS temp WHERE NOT EXISTS (SELECT id FROM authors LIMIT 1);")
+        db.session.execute(stmt)
+        db.session.commit()
         app.register_blueprint(author_api_blueprint)
+        app.register_blueprint(SWAGGERUI_BLUEPRINT)
+        
+
+        
         return app

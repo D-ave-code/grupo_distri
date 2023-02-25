@@ -1,0 +1,212 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "description": "App Authors",
+      "version": "1.0.0",
+      "title": "Aplicacion Books Trabajo grupal"
+    },
+    
+    "tags": [
+      {
+        "name": "authors Request",
+        "description": "EndPoints de API REST"
+      }
+    ],
+    "paths": {
+      "/authors": {
+        "get": {
+          "tags": [
+            "authors Request"
+          ],
+          "summary": "Retorna todos los authores",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/authorsRequests"
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "authors Request"
+          ],
+          "summary": "Crea un nuevo author",
+          "requestBody": {
+            "description": "authors Request Post Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorsRequestPostBody"
+                }
+              }
+            }
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "201": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+
+          }
+        }
+      },
+      "/authors/{id}": {
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "description": "ID of the cat that we want to match",
+            "type": "string"
+          }
+        ],
+        "get": {
+          "tags": [
+            "authors Request"
+          ],
+          "summary": "Devuelve un author por su ID",
+          "parameters": [
+            {
+              
+              "name": "id",
+              "required": true,
+              "description": "authors Request id",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/authorsRequest"
+              }
+            },
+            "204": {
+              "description": "No se encontro usuario"
+            }
+          }
+        },
+        "put": {
+          "summary": "Edita un author por su ID",
+          "tags": [
+            "authors Request"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "description": "authors Request id",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "authors Request Object",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorsRequest"
+                }
+              }
+            }
+          },
+         
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/components/schemas/authorsRequest"
+              }
+            },
+            "204": {
+              "description": "No existe author"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Elimina un author por su ID",
+          "tags": [
+            "authors Request"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "description": "authors Request Id",
+              "schema": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+              
+            },
+            "204": {
+              "description": "No existe author"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "id": {
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        },
+        "authorsRequestPostBody": {
+          "type": "object",
+          "properties": {
+            "first_name": {
+              "type": "string",
+              "format": "string"
+            },
+            "last_name": {
+              "type": "string",
+              "format": "string"
+            }
+          }
+        },
+        "authorsRequest": {
+          "type": "object",
+          "properties": {
+            "first_name": {
+              "type": "string",
+              "format": "string"
+            },
+            "last_name": {
+              "type": "string",
+              "format": "strin"
+            }
+          }
+        },
+        "authorsRequests": {
+          "type": "object",
+          "properties": {
+            "authorsRequest": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/authorsRequest"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
