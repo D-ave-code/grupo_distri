@@ -2,6 +2,7 @@ from . import db
 from datetime import datetime
 
 class Author(db.Model):
+    __tablename__='authors'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), unique=False, nullable=True)
     last_name = db.Column(db.String(50), unique=False, nullable=True)
