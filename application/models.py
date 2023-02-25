@@ -13,3 +13,4 @@ class Author(db.Model):
             'last_name': self.last_name
         }
     
+    

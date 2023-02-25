@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: grupod
 #    ports:
-#      - 5433:5432
+#      - 5432:5432
   proxy:
     image: traefik:v2.9.6
     command: --api.insecure=true --providers.docker
@@ -31,12 +31,12 @@ services:
       SERVER_PORT: 7001
     depends_on:
       - postgres-sql
+      - proxy
     deploy:
-      replicas: 1
+      replicas: 3
     expose:
       - 7001
     labels:
       - "traefik.http.routers.authors.rule=PathPrefix(`/app2`)"
       - "traefik.http.middlewares.authors.stripprefix.prefixes=/app2"
       - "traefik.http.routers.authors.middlewares=authors"
-
