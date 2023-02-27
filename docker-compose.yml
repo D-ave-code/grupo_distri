@@ -29,11 +29,16 @@ services:
       - 16686:16686
       - 14258:14258
   authors-service:
-    image: d4vecode/app-py-authors:1.0.0
+    image: d4vecode/app--authors:1.0.0
     restart: always
     environment:
       CONFIGURATION_SETUP: "config.DevelopmentConfig"
       SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@postgres-sql:5432/grupod"
+      DB_USERNAME : postgres
+      DB_PASSWORD : postgres
+      DB_HOST : postgres-sql
+      DB_PORT : 5432 
+      DB_NAME : grupod
     depends_on:
       postgres-sql:
         condition: service_healthy

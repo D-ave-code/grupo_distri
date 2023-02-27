@@ -15,7 +15,7 @@ class DevelopmentConfig(Config):
     try:
         SQLALCHEMY_DATABASE_URI=os.environ['SQLALCHEMY_DATABASE_URI']
     except:
-        SQLALCHEMY_DATABASE_URI="postgresql://postgres:postgres@localhost:5432/distribuida"
+        SQLALCHEMY_DATABASE_URI="postgresql://postgres:postgres@localhost:5432/test"
         
 class ProductionConfig(Config):
     pass

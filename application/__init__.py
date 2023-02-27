@@ -1,11 +1,7 @@
-import config
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_openapi3 import Info, Tag
-from flask_openapi3 import OpenAPI
-from flask import Blueprint
+from yoyo import read_migrations, get_backend
 
 db = SQLAlchemy()
 
@@ -16,22 +12,19 @@ def create_app():
     enviroment_configuration = os.environ['CONFIGURATION_SETUP']
 
     app.config.from_object(enviroment_configuration)
-
+    
     db.init_app(app)
-    migrate = Migrate(app, db)
-   
+    
+    yoyoback = get_backend(f"postgresql://{os.environ['DB_USERNAME']}:{os.environ['DB_PASSWORD']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}")       
+    migrations_folder = "migraciones"
+    migrations = read_migrations(migrations_folder)
+
+    if migrations:
+        with yoyoback.lock():
+            yoyoback.apply_migrations(yoyoback.to_apply(migrations))
+            print("Migraciones realizadas")
     with app.app_context():
         from .authors_api import author_api_blueprint, SWAGGERUI_BLUEPRINT
-        from flask_migrate import upgrade
-        from sqlalchemy import text
-        
-        upgrade()
-        stmt = text("INSERT INTO authors (first_name, last_name) SELECT * FROM (VALUES ('nombre1', 'ape1'), ('nombre2', 'ape2'),('nombre3', 'ape3'),('nombre4', 'ape4')) AS temp WHERE NOT EXISTS (SELECT id FROM authors LIMIT 1);")
-        db.session.execute(stmt)
-        db.session.commit()
         app.register_blueprint(author_api_blueprint)
         app.register_blueprint(SWAGGERUI_BLUEPRINT)
-        
-
-        
         return app
