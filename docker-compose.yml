@@ -55,7 +55,6 @@ services:
     expose:
       - 7001
     labels:
-       - "traefik.http.routers.authors-service.rule=Host(`localhost`)"
        - "traefik.http.routers.authors.rule=PathPrefix(`/app2`)"
        - "traefik.http.middlewares.authors.stripprefix.prefixes=/app2"
        - "traefik.http.routers.authors.middlewares=authors"
