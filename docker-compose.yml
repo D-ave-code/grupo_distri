@@ -2,6 +2,7 @@ version: '3'
 services:
   postgres-sql:
     image: postgres:alpine
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -13,6 +14,15 @@ services:
       retries: 5
 #    ports:
 #      - 5432:5432
+  cassandra:
+    image: cassandra
+    expose:
+      - 9042
+    healthcheck:
+      test: ["CMD-SHELL", "nodetool status | grep 'UN'"]
+      interval: 30s
+      timeout: 30s
+      retries: 10
   proxy:
     image: traefik:v2.9.6
     command: --api.insecure=true --providers.docker
@@ -23,13 +33,8 @@ services:
       - 80
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-  tracing:
-    image: jaegertracing/all-in-one
-    ports:
-      - 16686:16686
-      - 14258:14258
   authors-service:
-    image: d4vecode/app-authors-py:1.0.0
+    image: jaimesalvador/app-authors:espinosa-1.0.0
     restart: always
     environment:
       CONFIGURATION_SETUP: "config.DevelopmentConfig"
@@ -44,7 +49,6 @@ services:
         condition: service_healthy
       proxy:
         condition: service_started
-
     command: "flask run --port 7001 --host 0.0.0.0"
     deploy:
       replicas: 2
@@ -55,3 +59,23 @@ services:
        - "traefik.http.routers.authors.rule=PathPrefix(`/app2`)"
        - "traefik.http.middlewares.authors.stripprefix.prefixes=/app2"
        - "traefik.http.routers.authors.middlewares=authors"
+  bookservice:
+    image:  jaimesalvador/app-books:espinosa-1.0.0
+    restart: always
+    environment:
+      - CASSANDRA_URI=cassandra
+      - CASSANDRA_PORT=9042
+      - CASSANDRA_KEYSPACE=distribuida
+      - CASSANDRA_DATACENTER=datacenter1
+      - CASSANDRA_REPLICAS=1
+      - CASSANDRA_TABLE=books
+      - SERVER_PORT=7000
+    deploy:
+      replicas: 3
+    depends_on:
+      cassandra:
+        condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bookservice.rule=Host(`book.localhost`)
+      - traefik.http.services.bookservice.loadbalancer.server.port=7000
