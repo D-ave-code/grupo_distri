@@ -34,7 +34,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   authors-service:
-    image: d4vecode/app-authors:espinosa-1.0.0
+    image: d4vecode/app-authorss:espinosa-1.0.0
     restart: always
     environment:
       CONFIGURATION_SETUP: "config.DevelopmentConfig"
@@ -60,7 +60,7 @@ services:
        - "traefik.http.middlewares.authors.stripprefix.prefixes=/app2"
        - "traefik.http.routers.authors.middlewares=authors"
   bookservice:
-    image:  d4vecode/app-books:espinosa-1.0.0
+    image:  d4vecode/app-bookss:espinosa-1.0.0
     restart: always
     environment:
       - CASSANDRA_URI=cassandra
